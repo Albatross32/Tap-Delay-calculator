@@ -18,7 +18,7 @@ button{width:100%;border:none;border-radius:15px;cursor:pointer}
 <body>
 <div class="container">
 <h1>Tap Delay</h1>
-<button id="tapBtn">TAP</button>
+<button id="tapBtn" onclick="tap()">TAP</button>
 
 <div class="item"><div class="label">Average</div><div class="value"><span id="avg">0.0</span> ms</div></div>
 <div class="item"><div class="label">Current Delay</div><div class="value"><span id="delay">0.0</span> ms</div></div>
@@ -26,26 +26,29 @@ button{width:100%;border:none;border-radius:15px;cursor:pointer}
 <div class="item"><div class="label">Average × 2</div><div class="value"><span id="double">0.0</span> ms</div></div>
 
 <div id="count">0 Samples</div>
-<button id="resetBtn">Reset</button>
+<button id="resetBtn" onclick="resetData()">Reset</button>
 </div>
 <script>
-// دریافت المان‌ها با شناسه‌ی درست
-const avgEl = document.getElementById('avg');
-const delayEl = document.getElementById('delay');
-const halfEl = document.getElementById('half');
-const doubleEl = document.getElementById('double');
-const countEl = document.getElementById('count');
-const tapBtn = document.getElementById('tapBtn');
-const resetBtn = document.getElementById('resetBtn');
+// المان‌ها
+var avgEl = document.getElementById('avg');
+var delayEl = document.getElementById('delay');
+var halfEl = document.getElementById('half');
+var doubleEl = document.getElementById('double');
+var countEl = document.getElementById('count');
 
-let lastTap = null, intervals = [];
+var lastTap = null;
+var intervals = [];
 
 function tap() {
-  const now = performance.now();
+  var now = Date.now();
   if (lastTap !== null) {
-    const currentDelay = now - lastTap;
+    var currentDelay = now - lastTap;
     intervals.push(currentDelay);
-    const avg = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+    var sum = 0;
+    for (var i = 0; i < intervals.length; i++) {
+      sum = sum + intervals[i];
+    }
+    var avg = sum / intervals.length;
     avgEl.textContent = avg.toFixed(1);
     delayEl.textContent = currentDelay.toFixed(1);
     halfEl.textContent = (avg / 2).toFixed(1);
@@ -65,14 +68,13 @@ function resetData() {
   countEl.textContent = "0 Samples";
 }
 
-tapBtn.onclick = tap;
-resetBtn.onclick = resetData;
-document.addEventListener("keydown", e => {
-  if (e.code === "Space") {
+// کیبورد
+document.onkeydown = function(e) {
+  if (e.code === "Space" || e.keyCode === 32) {
     e.preventDefault();
     tap();
   }
-});
+};
 </script>
 </body>
 </html>
