@@ -18,7 +18,7 @@ button{width:100%;border:none;border-radius:15px;cursor:pointer}
 <body>
 <div class="container">
 <h1>Tap Delay</h1>
-<button id="tapBtn" onclick="tap()">TAP</button>
+<button id="tapBtn">TAP</button>
 
 <div class="item"><div class="label">Average</div><div class="value"><span id="avg">0.0</span> ms</div></div>
 <div class="item"><div class="label">Current Delay</div><div class="value"><span id="delay">0.0</span> ms</div></div>
@@ -26,55 +26,65 @@ button{width:100%;border:none;border-radius:15px;cursor:pointer}
 <div class="item"><div class="label">Average × 2</div><div class="value"><span id="double">0.0</span> ms</div></div>
 
 <div id="count">0 Samples</div>
-<button id="resetBtn" onclick="resetData()">Reset</button>
+<button id="resetBtn">Reset</button>
 </div>
 <script>
-// المان‌ها
-var avgEl = document.getElementById('avg');
-var delayEl = document.getElementById('delay');
-var halfEl = document.getElementById('half');
-var doubleEl = document.getElementById('double');
-var countEl = document.getElementById('count');
+document.addEventListener('DOMContentLoaded', function() {
+  var avgEl = document.getElementById('avg');
+  var delayEl = document.getElementById('delay');
+  var halfEl = document.getElementById('half');
+  var doubleEl = document.getElementById('double');
+  var countEl = document.getElementById('count');
 
-var lastTap = null;
-var intervals = [];
+  var lastTap = null;
+  var intervals = [];
 
-function tap() {
-  var now = Date.now();
-  if (lastTap !== null) {
-    var currentDelay = now - lastTap;
-    intervals.push(currentDelay);
-    var sum = 0;
-    for (var i = 0; i < intervals.length; i++) {
-      sum = sum + intervals[i];
+  function tap() {
+    var now = Date.now();
+    if (lastTap !== null) {
+      var currentDelay = now - lastTap;
+      intervals.push(currentDelay);
+      var sum = 0;
+      for (var i = 0; i < intervals.length; i++) {
+        sum = sum + intervals[i];
+      }
+      var avg = sum / intervals.length;
+      avgEl.textContent = avg.toFixed(1);
+      delayEl.textContent = currentDelay.toFixed(1);
+      halfEl.textContent = (avg / 2).toFixed(1);
+      doubleEl.textContent = (avg * 2).toFixed(1);
+      countEl.textContent = intervals.length + " Samples";
     }
-    var avg = sum / intervals.length;
-    avgEl.textContent = avg.toFixed(1);
-    delayEl.textContent = currentDelay.toFixed(1);
-    halfEl.textContent = (avg / 2).toFixed(1);
-    doubleEl.textContent = (avg * 2).toFixed(1);
-    countEl.textContent = intervals.length + " Samples";
+    lastTap = now;
   }
-  lastTap = now;
-}
 
-function resetData() {
-  lastTap = null;
-  intervals = [];
-  avgEl.textContent = "0.0";
-  delayEl.textContent = "0.0";
-  halfEl.textContent = "0.0";
-  doubleEl.textContent = "0.0";
-  countEl.textContent = "0 Samples";
-}
+  function resetData() {
+    lastTap = null;
+    intervals = [];
+    avgEl.textContent = "0.0";
+    delayEl.textContent = "0.0";
+    halfEl.textContent = "0.0";
+    doubleEl.textContent = "0.0";
+    countEl.textContent = "0 Samples";
+  }
 
-// کیبورد
-document.onkeydown = function(e) {
-  if (e.code === "Space" || e.keyCode === 32) {
+  document.getElementById('tapBtn').addEventListener('click', function(e) {
     e.preventDefault();
     tap();
-  }
-};
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    resetData();
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.code === 'Space' || e.keyCode === 32) {
+      e.preventDefault();
+      tap();
+    }
+  });
+});
 </script>
 </body>
 </html>
