@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tap Delay</title>
+<style>
+body{margin:0;background:#111;color:#fff;font-family:tahoma,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.container{width:520px;max-width:95%;background:#1f1f1f;border-radius:20px;padding:30px;text-align:center;box-shadow:0 0 25px rgba(0,0,0,.5)}
+h1{margin-top:0;font-size:36px}
+button{width:100%;border:none;border-radius:15px;cursor:pointer}
+#tapBtn{height:90px;background:#2196F3;color:#fff;font-size:34px}
+#resetBtn{margin-top:25px;height:60px;background:#d32f2f;color:#fff;font-size:24px}
+.item{margin-top:25px}.label{color:#bbb;font-size:22px}.value{font-size:50px;font-weight:bold;margin-top:8px}
+#count{margin-top:25px;color:#888;font-size:18px}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Tap Delay</h1>
+<button id="tapBtn">TAP</button>
+
+<div class="item"><div class="label">Average</div><div class="value"><span id="avg">0.0</span> ms</div></div>
+<div class="item"><div class="label">Current Delay</div><div class="value"><span id="delay">0.0</span> ms</div></div>
+<div class="item"><div class="label">Average ÷ 2</div><div class="value"><span id="half">0.0</span> ms</div></div>
+<div class="item"><div class="label">Average × 2</div><div class="value"><span id="double">0.0</span> ms</div></div>
+
+<div id="count">0 Samples</div>
+<button id="resetBtn">Reset</button>
+</div>
+<script>
+let lastTap=null, intervals=[];
+function tap(){
+ const now=performance.now();
+ if(lastTap!==null){
+   const currentDelay=now-lastTap;
+   intervals.push(currentDelay);
+   const avg=intervals.reduce((a,b)=>a+b,0)/intervals.length;
+   avgEl.textContent=avg.toFixed(1);
+   delayEl.textContent=currentDelay.toFixed(1);
+   halfEl.textContent=(avg/2).toFixed(1);
+   doubleEl.textContent=(avg*2).toFixed(1);
+   count.textContent=intervals.length+" Samples";
+ }
+ lastTap=now;
+}
+function resetData(){
+ lastTap=null; intervals=[];
+ avgEl.textContent="0.0";
+ delayEl.textContent="0.0";
+ halfEl.textContent="0.0";
+ doubleEl.textContent="0.0";
+ count.textContent="0 Samples";
+}
+tapBtn.onclick=tap;
+resetBtn.onclick=resetData;
+document.addEventListener("keydown",e=>{if(e.code==="Space"){e.preventDefault();tap();}});
+</script>
+</body>
+</html>
